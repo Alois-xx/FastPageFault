@@ -20,9 +20,10 @@ Program::Program(std::queue<std::wstring> &&args)
 void Program::Help()
 {
 	const wchar_t* HelpStr =
-		L"FastPageFault [-N dd [-lock] [-touchthreads n] [-file xxx [-flush] [-mapthreads n]]] [-filemap xxx [-flush]] [-createfile dd xxx]\n" \
+		L"FastPageFault [-N dd [-lock] [-touchthreads n] [-file xxx [-flush] [-mapthreads n]]] [-filemap xxx [-flush]] [-createfile dd xxx] [-wait]\n" \
 		L"By Alois Kraus 2017 v1.0\n" \
 		L"  -N ddd          Allocate and touch ddd MB of memory\n" \
+		L"  -wait           Wait for keypress before exiting\n" \
 		L"  -touchthreads n Touch allocated memory by 1 up to n threads where each thread touches N/n bytes of memory to simulate a concurrent touch. Use n=all to run from 1-n hardware threads.\n" \
 		L"  -lock           Lock allocated memory (-N ddd) with VirtualLock before touching pages\n" \
 		L"  -file xxx       Execute map/touch/unmap in a loop until the touch threads have finished measuring the soft page fault performance\n" \
@@ -172,7 +173,7 @@ void Program::AllocateAndTouchMemory(size_t N)
 		Touch(pBuffer, N);
 		auto touchTime2 = sw.Stop();
 		printf("%d\t%.0f\t%lld\t%.3f\tN.a.\tTouch 2\n", nTouch, MB, touchTime2.count(), AveragePageAccessTimeInus(touchTime2, N));
-		VirtualFree(pBuffer);
+		//VirtualFree(pBuffer);
 	}
 
 }
@@ -343,6 +344,9 @@ bool Program::Parse()
 								_Action = Action::FileMap;
 							 } },
 
+		{ L"-wait", [=]() {
+								 _Wait = true;
+						   } },
 		{ L"-prefetch", [=]() { _bPrefetch = true; } },
 		{ L"-lock", [=]() { _bLockPages = true; } },
 		{ L"-N", [=]() { _BytesToAllocate = 1024LL * 1024LL * ConvertToInt(GetNextArg());  } },

@@ -28,6 +28,11 @@ int wmain(int argc, wchar_t **argv)
 	if (p.Parse())
 	{
 		p.Execute();
+		if (p.ShouldWait())
+		{
+			printf("\nPress any key to exit");
+			int c = getchar();
+		}
 	}
 	else
 	{

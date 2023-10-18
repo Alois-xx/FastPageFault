@@ -12,6 +12,7 @@ namespace FastPageFault
 		Program(std::queue<std::wstring> &&args);
 		bool Parse();
 		void Execute();
+		bool ShouldWait() { return _Wait; }
 		void Help();
 		~Program();
 	private: // Program dependent methods
@@ -44,7 +45,7 @@ namespace FastPageFault
 		int _MemCopyThreads = 1;
 		__int64 _BytesToMemCopy = 0;
 		volatile bool _bFinishTouching = false;
-
+		bool _Wait = false;
 		int _MapThreadCount;
 		
 		enum Action
